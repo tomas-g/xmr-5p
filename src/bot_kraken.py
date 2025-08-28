@@ -356,7 +356,29 @@ class SimpleThresholdBot:
                     self.logger.info("Trading disabled (dry-run): would SELL")
 
     def run(self):
-        self.logger.info(f"Starting SimpleThresholdBot on {self.pair} | drop={self.drop_pct:.1%}, rise={self.rise_pct:.1%}")
+        try:
+            self.logger.info(f"=== BOT STARTUP ===")
+            self.logger.info(f"Pair: {self.pair}")
+            self.logger.info(f"Drop threshold: {self.drop_pct:.1%}")
+            self.logger.info(f"Rise threshold: {self.rise_pct:.1%}")
+            self.logger.info(f"Trading enabled: {self.trading_enabled}")
+            self.logger.info(f"API key configured: {bool(self.client.api_key)}")
+            self.logger.info(f"Starting SimpleThresholdBot on {self.pair} | drop={self.drop_pct:.1%}, rise={self.rise_pct:.1%}")
+            
+            # Test API connection
+            self.logger.info("Testing Kraken API connection...")
+            test_price = self.client.get_ticker_price()
+            if test_price:
+                self.logger.info(f"API connection successful. Current {self.pair} price: ${test_price:.2f}")
+            else:
+                self.logger.error("API connection failed - no price data received")
+                return
+                
+            self.logger.info("=== STARTING MAIN LOOP ===")
+        except Exception as exc:
+            self.logger.error(f"Startup failed: {exc}")
+            return
+            
         while True:
             try:
                 self.tick()
