@@ -99,21 +99,31 @@ def start_web(trading_enabled: bool):
 
 
 def main():
+    # Force immediate output
+    import sys
+    print("=== MAIN.PY STARTED ===", flush=True)
+    
     parser = argparse.ArgumentParser(description="Simple XMR/USD threshold bot on Kraken")
     parser.add_argument("mode", choices=["start", "dry-run", "web", "web-dry-run"], help="Run mode")
     args = parser.parse_args()
+    
+    print(f"=== MODE: {args.mode} ===", flush=True)
 
     load_dotenv()
+    print("=== DOTENV LOADED ===", flush=True)
 
     if args.mode in ("dry-run", "web-dry-run"):
         import os
         os.environ["TRADING_ENABLED"] = "false"
 
     if args.mode == "web" or args.mode == "web-dry-run":
+        print("=== STARTING WEB MODE ===", flush=True)
         start_web(trading_enabled=(args.mode == "web"))
         return
 
+    print("=== CREATING BOT ===", flush=True)
     bot = SimpleThresholdBot()
+    print("=== BOT CREATED, STARTING RUN ===", flush=True)
     bot.run()
 
 
