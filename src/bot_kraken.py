@@ -206,9 +206,7 @@ class SimpleThresholdBot:
         return start_price, change_pct
 
     def tick(self):
-        print("=== TICK START ===", flush=True)
         price = self.client.get_ticker_price()
-        print(f"=== PRICE: {price} ===", flush=True)
         if price is None:
             self.logger.warning("No price, skipping tick")
             return
@@ -219,9 +217,7 @@ class SimpleThresholdBot:
         start_24h, change_24h = self._compute_24h_stats(price)
 
         # Fetch balances once per tick
-        print("=== FETCHING BALANCES ===", flush=True)
         balances = self.client.get_balances() or {}
-        print(f"=== BALANCES: {balances} ===", flush=True)
         usd_available = float(balances.get("USD", 0.0))
         xmr_available = float(balances.get("XMR", 0.0))
 
@@ -234,20 +230,7 @@ class SimpleThresholdBot:
         # Determine current mode
         mode = "SELL MODE" if self.position_qty > 0 else "BUY MODE"
 
-        # Snapshot state log each tick
-        self.logger.info(
-            (
-                f"Tick: price={price:.4f} | session_high={self.session_high if self.session_high is not None else 'n/a'} "
-                f"| last_sell={self.last_sell_price if self.last_sell_price is not None else 'n/a'} "
-                f"| entry={self.entry_price if self.entry_price is not None else 'n/a'} | pos_qty={self.position_qty:.6f} "
-                f"| USD=${usd_available:.2f} | XMR={xmr_available:.6f} "
-                f"| drop_ref={drop_ref if drop_ref is None else f'{drop_ref:.4f}'} "
-                f"| rise_ref={rise_ref if rise_ref is None else f'{rise_ref:.4f}'} "
-                f"| 24h_start={start_24h if start_24h is None else f'{start_24h:.4f}'} "
-                f"| 24h_change={change_24h if change_24h is None else f'{change_24h:.2%}'} "
-                f"| mode={mode}"
-            )
-        )
+        # Remove verbose tick logging - only log on hour or trades
 
         # Determine last action for display
         if hasattr(self, '_loaded_from_state') and self._loaded_from_state and self.position_qty > 0:
@@ -361,31 +344,18 @@ class SimpleThresholdBot:
 
     def run(self):
         try:
-            print("=== BOT.RUN() ENTRY ===", flush=True)
-            self.logger.info(f"=== BOT STARTUP ===")
-            print("=== LOGGER WORKING ===", flush=True)
-            self.logger.info(f"Pair: {self.pair}")
-            self.logger.info(f"Drop threshold: {self.drop_pct:.1%}")
-            self.logger.info(f"Rise threshold: {self.rise_pct:.1%}")
-            self.logger.info(f"Trading enabled: {self.trading_enabled}")
-            self.logger.info(f"API key configured: {bool(self.client.api_key)}")
-            self.logger.info(f"Starting SimpleThresholdBot on {self.pair} | drop={self.drop_pct:.1%}, rise={self.rise_pct:.1%}")
+            self.logger.info(f"Starting SimpleThresholdBot on {self.pair} | drop={self.drop_pct:.1%}, rise={self.rise_pct:.1%} | trading={self.trading_enabled}")
             
             # Test API connection
-            print("=== ABOUT TO TEST API ===", flush=True)
-            self.logger.info("Testing Kraken API connection...")
             test_price = self.client.get_ticker_price()
-            print(f"=== API TEST RESULT: {test_price} ===", flush=True)
             if test_price:
                 self.logger.info(f"API connection successful. Current {self.pair} price: ${test_price:.2f}")
             else:
                 self.logger.error("API connection failed - no price data received")
                 return
                 
-            print("=== ABOUT TO START MAIN LOOP ===", flush=True)
-            self.logger.info("=== STARTING MAIN LOOP ===")
+            self.logger.info("Bot started successfully - entering main loop")
         except Exception as exc:
-            print(f"=== STARTUP EXCEPTION: {exc} ===", flush=True)
             self.logger.error(f"Startup failed: {exc}")
             return
             
