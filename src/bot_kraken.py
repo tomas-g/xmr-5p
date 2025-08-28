@@ -206,7 +206,9 @@ class SimpleThresholdBot:
         return start_price, change_pct
 
     def tick(self):
+        print("=== TICK START ===", flush=True)
         price = self.client.get_ticker_price()
+        print(f"=== PRICE: {price} ===", flush=True)
         if price is None:
             self.logger.warning("No price, skipping tick")
             return
@@ -217,7 +219,9 @@ class SimpleThresholdBot:
         start_24h, change_24h = self._compute_24h_stats(price)
 
         # Fetch balances once per tick
+        print("=== FETCHING BALANCES ===", flush=True)
         balances = self.client.get_balances() or {}
+        print(f"=== BALANCES: {balances} ===", flush=True)
         usd_available = float(balances.get("USD", 0.0))
         xmr_available = float(balances.get("XMR", 0.0))
 
