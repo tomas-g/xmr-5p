@@ -1,0 +1,41 @@
+# Environment and secrets
+.env
+*.env
+!config.env.example
+
+# Bot state and data files
+.bot_state.json
+trades.csv
+trading_bot.log
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environments
+5p-venv/
+crypto-venv/
+rh-venv/
+venv/
+env/
+ENV/
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
