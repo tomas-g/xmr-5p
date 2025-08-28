@@ -357,7 +357,9 @@ class SimpleThresholdBot:
 
     def run(self):
         try:
+            print("=== BOT.RUN() ENTRY ===", flush=True)
             self.logger.info(f"=== BOT STARTUP ===")
+            print("=== LOGGER WORKING ===", flush=True)
             self.logger.info(f"Pair: {self.pair}")
             self.logger.info(f"Drop threshold: {self.drop_pct:.1%}")
             self.logger.info(f"Rise threshold: {self.rise_pct:.1%}")
@@ -366,16 +368,20 @@ class SimpleThresholdBot:
             self.logger.info(f"Starting SimpleThresholdBot on {self.pair} | drop={self.drop_pct:.1%}, rise={self.rise_pct:.1%}")
             
             # Test API connection
+            print("=== ABOUT TO TEST API ===", flush=True)
             self.logger.info("Testing Kraken API connection...")
             test_price = self.client.get_ticker_price()
+            print(f"=== API TEST RESULT: {test_price} ===", flush=True)
             if test_price:
                 self.logger.info(f"API connection successful. Current {self.pair} price: ${test_price:.2f}")
             else:
                 self.logger.error("API connection failed - no price data received")
                 return
                 
+            print("=== ABOUT TO START MAIN LOOP ===", flush=True)
             self.logger.info("=== STARTING MAIN LOOP ===")
         except Exception as exc:
+            print(f"=== STARTUP EXCEPTION: {exc} ===", flush=True)
             self.logger.error(f"Startup failed: {exc}")
             return
             
